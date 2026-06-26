@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>Beatriz | Treino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F7F4F0;
+  --card:#FFFFFF;
+  --gray-light:#EDEAE5;
+  --gray-mid:#C8C3BC;
+  --gray-text:#6B6B6B;
+  --dark:#1E1E1E;
+  --red:#C0392B;
+  --red-deep:#A93226;
+  --red-light:#F0C8C5;
+  --red-pale:#FAF0EF;
+}
+html,body{height:100%;background:var(--bg);font-family:'Inter',sans-serif;color:var(--dark);overflow-x:hidden}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;position:relative}
+
+/* TIP BANNER */
+.tip-banner{background:var(--red-deep);color:#fff;padding:10px 16px;display:flex;align-items:center;gap:10px;font-size:12.5px;font-family:'Inter',sans-serif;line-height:1.4;flex-shrink:0}
+.tip-icon{font-size:18px;flex-shrink:0}
+
+/* HEADER */
+.app-header{background:var(--bg);padding:14px 18px 10px;flex-shrink:0;border-bottom:1px solid var(--gray-light)}
+.app-header h1{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;letter-spacing:0.5px;color:var(--dark)}
+.app-header p{font-size:12px;color:var(--gray-text);margin-top:1px}
+
+/* SCROLL AREA */
+.scroll-area{flex:1;overflow-y:auto;padding:14px 14px 80px;-webkit-overflow-scrolling:touch}
+.scroll-area::-webkit-scrollbar{display:none}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--gray-light);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;cursor:pointer;border:none;background:none;color:var(--gray-text);font-size:10px;font-family:'Inter',sans-serif;font-weight:500;transition:color .2s}
+.nav-btn.active{color:var(--red-deep)}
+.nav-btn svg{width:22px;height:22px;stroke-width:1.8}
+
+/* SECTION LABEL */
+.section-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;color:var(--gray-text);text-transform:uppercase;margin-bottom:10px;padding-left:2px}
+
+/* WORKOUT TAB */
+.workout-tabs{display:flex;gap:8px;margin-bottom:16px}
+.wtab{flex:1;padding:10px 4px;border:1.5px solid var(--gray-mid);border-radius:10px;background:#fff;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--gray-text);cursor:pointer;transition:all .2s;text-align:center}
+.wtab.active{background:var(--red-deep);border-color:var(--red-deep);color:#fff}
+
+/* EXERCISE CARD */
+.ex-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid var(--gray-light);transition:all .25s;position:relative;overflow:hidden}
+.ex-card.done{border-color:#c8e6c9;background:#f1f8f1}
+.ex-card.done .ex-name{color:#4caf50;text-decoration:line-through;text-decoration-color:#a5d6a7}
+.ex-card.done .ex-detail{color:#81c784}
+.ex-header{display:flex;align-items:flex-start;gap:12px}
+.ex-check{width:26px;height:26px;border-radius:50%;border:2px solid var(--gray-mid);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s;margin-top:1px}
+.ex-check.checked{background:#4caf50;border-color:#4caf50;color:#fff}
+.ex-info{flex:1}
+.ex-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;line-height:1.1;margin-bottom:4px}
+.ex-badges{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.badge{font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:20px;background:var(--red-pale);color:var(--red-deep)}
+.badge.rest{background:#F0F4FF;color:#5272D4}
+.ex-goal{font-size:11.5px;color:var(--gray-text);margin-top:5px;line-height:1.4}
+.ex-actions{display:flex;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--gray-light)}
+.obs-input{flex:1;padding:7px 10px;border:1.5px solid var(--gray-light);border-radius:8px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--dark);background:var(--bg);outline:none}
+.obs-input:focus{border-color:var(--red)}
+.rpe-select{padding:7px 8px;border:1.5px solid var(--gray-light);border-radius:8px;font-size:12.5px;font-family:'Inter',sans-serif;color:var(--dark);background:var(--bg);outline:none;min-width:80px}
+.rpe-select:focus{border-color:var(--red)}
+
+/* PROGRESS BAR */
+.progress-wrap{background:var(--gray-light);border-radius:20px;height:6px;margin-bottom:14px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--red),var(--red-deep));border-radius:20px;transition:width .4s ease}
+.progress-label{font-size:11.5px;color:var(--gray-text);margin-bottom:6px;display:flex;justify-content:space-between}
+
+/* MOBILITY CARD */
+.mob-card{background:var(--red-pale);border:1.5px solid var(--red-light);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.mob-icon{font-size:26px}
+.mob-text h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--red-deep)}
+.mob-text p{font-size:11.5px;color:var(--gray-text);margin-top:2px}
+
+/* GUIDE TAB */
+.guide-search{width:100%;padding:10px 14px;border:1.5px solid var(--gray-light);border-radius:12px;font-size:14px;font-family:'Inter',sans-serif;background:#fff;outline:none;margin-bottom:14px;color:var(--dark)}
+.guide-search:focus{border-color:var(--red)}
+.guide-card{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid var(--gray-light);cursor:pointer}
+.guide-card-header{display:flex;justify-content:space-between;align-items:center}
+.guide-card h3{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700}
+.guide-card .chevron{font-size:16px;color:var(--gray-text);transition:transform .2s}
+.guide-card.open .chevron{transform:rotate(180deg)}
+.guide-body{margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-light);display:none}
+.guide-card.open .guide-body{display:block}
+.guide-row{display:flex;gap:8px;margin-bottom:8px;font-size:12.5px}
+.guide-label{font-weight:600;color:var(--red-deep);min-width:64px;flex-shrink:0}
+.guide-val{color:var(--dark);line-height:1.5}
+.warn-tag{display:inline-block;font-size:10.5px;padding:2px 8px;background:#FFF3E0;color:#E65100;border-radius:20px;margin-top:4px}
+
+/* EVAL TAB */
+.eval-card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;border:1.5px solid var(--gray-light)}
+.eval-card h3{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;margin-bottom:12px;color:var(--red-deep)}
+.form-row{margin-bottom:12px}
+.form-row label{font-size:12px;font-weight:600;color:var(--gray-text);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:9px 12px;border:1.5px solid var(--gray-light);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;color:var(--dark);background:var(--bg);outline:none}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:var(--red)}
+.form-row textarea{min-height:64px;resize:vertical}
+/* SLIDER */
+.slider-wrap{margin-top:6px}
+.slider-labels{display:flex;justify-content:space-between;font-size:10.5px;color:var(--gray-text);margin-bottom:4px}
+.slider-val-label{text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--red-deep);margin-top:4px;min-height:18px}
+input[type=range].eval-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:10px;background:var(--gray-light);outline:none;cursor:pointer}
+input[type=range].eval-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--red-deep);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(196,92,101,.35)}
+input[type=range].eval-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--red-deep);cursor:pointer;border:2px solid #fff;box-shadow:0 1px 4px rgba(196,92,101,.35)}
+.btn-save{width:100%;padding:13px;background:var(--red-deep);color:#fff;border:none;border-radius:12px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:background .2s}
+.btn-save:active{background:var(--red)}
+
+/* HISTORY */
+.hist-week{background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;border:1.5px solid var(--gray-light)}
+.hist-week-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.hist-week-header h3{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700}
+.hist-badge{font-size:11px;padding:2px 10px;border-radius:20px;background:var(--red-pale);color:var(--red-deep);font-weight:600}
+.hist-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hist-item{text-align:center}
+.hist-item .hi-label{font-size:10px;color:var(--gray-text);margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px}
+.hist-item .hi-val{font-size:13px;font-weight:600;color:var(--dark)}
+.hist-empty{text-align:center;padding:32px 16px;color:var(--gray-text);font-size:14px}
+
+/* PROFILE TAB */
+.profile-hero{background:linear-gradient(135deg,var(--red-deep),#E8808A);border-radius:16px;padding:20px;margin-bottom:14px;color:#fff}
+.profile-hero .ph-name{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;letter-spacing:.5px}
+.profile-hero .ph-sub{font-size:13px;opacity:.85;margin-top:2px}
+.profile-hero .ph-goal{display:inline-block;margin-top:10px;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;letter-spacing:.5px}
+.profile-section{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;border:1.5px solid var(--gray-light)}
+.profile-section h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.2px;color:var(--gray-text);text-transform:uppercase;margin-bottom:12px}
+.profile-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.profile-stat{text-align:center;padding:10px;background:var(--bg);border-radius:10px}
+.profile-stat .ps-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;color:var(--dark)}
+.profile-stat .ps-unit{font-size:10px;color:var(--gray-text)}
+.profile-stat .ps-label{font-size:11px;color:var(--gray-text);margin-top:1px}
+.measures-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.measure-item{background:var(--bg);border-radius:10px;padding:10px;text-align:center}
+.measure-item .mi-val{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;color:var(--dark)}
+.measure-item .mi-label{font-size:10.5px;color:var(--gray-text)}
+.obstacle-tag{display:inline-block;background:var(--red-pale);color:var(--red-deep);padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;margin:3px}
+
+/* DONE TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+
+/* WEEKLY TRACKER */
+.week-tracker{background:#fff;border-radius:14px;padding:14px;margin-bottom:14px;border:1.5px solid var(--gray-light)}
+.week-tracker h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.2px;color:var(--gray-text);text-transform:uppercase;margin-bottom:10px}
+.week-days{display:flex;gap:6px;justify-content:space-between}
+.wday{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.wday-label{font-size:10px;color:var(--gray-text);text-transform:uppercase}
+.wday-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray-mid);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:14px}
+.wday-dot.active{background:var(--red-deep);border-color:var(--red-deep)}
+
+.page{display:none}
+.page.active{display:block}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- TIP BANNER -->
+  <div class="tip-banner">
+    <span class="tip-icon">💡</span>
+    <span><strong>Dica:</strong> Mantenha a respiração controlada e contraia o abdômen — isso melhora a execução de todos os movimentos.</span>
+  </div>
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <h1 id="page-title">MEU TREINO</h1>
+    <p id="page-sub">Selecione o treino do dia</p>
+  </div>
+
+  <!-- SCROLL -->
+  <div class="scroll-area" id="scroll-area">
+
+    <!-- TREINO PAGE -->
+    <div class="page active" id="page-treino">
+      <div class="workout-tabs">
+        <button class="wtab active" onclick="selectWorkout('A',this)">A</button>
+        <button class="wtab" onclick="selectWorkout('B',this)">B</button>
+        <button class="wtab" onclick="selectWorkout('C',this)">C</button>
+      </div>
+      <div class="progress-label">
+        <span>Progresso</span>
+        <span id="prog-count">0 / 0</span>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="prog-bar" style="width:0%"></div></div>
+
+      <!-- Week tracker -->
+      <div class="week-tracker">
+        <h3>Esta semana</h3>
+        <div class="week-days" id="week-days"></div>
+      </div>
+
+      <div id="exercise-list"></div>
+    </div>
+
+    <!-- GUIA PAGE -->
+    <div class="page" id="page-guia">
+      <input class="guide-search" type="search" placeholder="🔍  Buscar exercício..." oninput="filterGuide(this.value)" id="guide-search"/>
+      <div id="guide-list"></div>
+    </div>
+
+    <!-- AVALIAÇÃO PAGE -->
+    <div class="page" id="page-eval">
+      <div class="eval-card">
+        <h3>📊 Registro Semanal</h3>
+        <div class="form-row">
+          <label>Semana</label>
+          <select id="eval-week">
+            <option value="">Selecionar semana...</option>
+            <option value="1">Semana 1</option><option value="2">Semana 2</option>
+            <option value="3">Semana 3</option><option value="4">Semana 4</option>
+            <option value="5">Semana 5</option><option value="6">Semana 6</option>
+            <option value="7">Semana 7</option><option value="8">Semana 8</option>
+            <option value="9">Semana 9</option><option value="10">Semana 10</option>
+            <option value="11">Semana 11</option><option value="12">Semana 12</option>
+            <option value="13">Semana 13</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Frequência (treinos)</label>
+          <select id="eval-freq">
+            <option value="">—</option>
+            <option value="1">1x</option><option value="2">2x</option>
+            <option value="3">3x</option><option value="4">4x</option>
+            <option value="5">5x</option><option value="6">6x</option>
+            <option value="7">7x</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Humor 😊</label>
+          <div class="slider-wrap">
+            <div class="slider-labels"><span>Baixo</span><span>Alto</span></div>
+            <input type="range" class="eval-slider" id="slider-humor" min="1" max="5" value="3" oninput="updateSliderLabel('humor',this.value)"/>
+            <div class="slider-val-label" id="label-humor"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Energia ⚡</label>
+          <div class="slider-wrap">
+            <div class="slider-labels"><span>Baixa</span><span>Alta</span></div>
+            <input type="range" class="eval-slider" id="slider-energia" min="1" max="5" value="3" oninput="updateSliderLabel('energia',this.value)"/>
+            <div class="slider-val-label" id="label-energia"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Dificuldade 💪</label>
+          <div class="slider-wrap">
+            <div class="slider-labels"><span>Fácil</span><span>Difícil</span></div>
+            <input type="range" class="eval-slider" id="slider-dific" min="1" max="5" value="3" oninput="updateSliderLabel('dific',this.value)"/>
+            <div class="slider-val-label" id="label-dific"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Dor / desconforto</label>
+          <select id="eval-dor">
+            <option value="">—</option>
+            <option value="Nenhum">Nenhum</option>
+            <option value="Leve">Leve</option>
+            <option value="Moderado">Moderado</option>
+            <option value="Forte">Forte</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Sono 😴</label>
+          <div class="slider-wrap">
+            <div class="slider-labels"><span>Ruim</span><span>Ótimo</span></div>
+            <input type="range" class="eval-slider" id="slider-sono" min="1" max="5" value="3" oninput="updateSliderLabel('sono',this.value)"/>
+            <div class="slider-val-label" id="label-sono"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Alimentação 🥗</label>
+          <div class="slider-wrap">
+            <div class="slider-labels"><span>Ruim</span><span>Ótima</span></div>
+            <input type="range" class="eval-slider" id="slider-alim" min="1" max="5" value="3" oninput="updateSliderLabel('alim',this.value)"/>
+            <div class="slider-val-label" id="label-alim"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Observações</label>
+          <textarea id="eval-obs" placeholder="Como foi a semana? Alguma dificuldade específica?"></textarea>
+        </div>
+        <button class="btn-save" onclick="saveEval()">SALVAR REGISTRO</button>
+      </div>
+
+      <!-- HISTÓRICO -->
+      <div class="section-label" style="margin-top:4px">Histórico</div>
+      <div id="hist-list"></div>
+    </div>
+
+    <!-- PERFIL PAGE -->
+    <div class="page" id="page-perfil">
+      <div class="profile-hero">
+        <div class="ph-name">Beatriz Leonel</div>
+        <div class="ph-sub">27 anos</div>
+        <div class="ph-goal">🎯 Saúde Física / Emagrecimento</div>
+      </div>
+      <div class="profile-section">
+        <h3>Dados Corporais</h3>
+        <div class="profile-stat-grid">
+          <div class="profile-stat">
+            <div class="ps-val">88</div>
+            <div class="ps-unit">kg</div>
+            <div class="ps-label">Peso Atual</div>
+          </div>
+          <div class="profile-stat">
+            <div class="ps-val">27</div>
+            <div class="ps-unit">anos</div>
+            <div class="ps-label">Idade</div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-section">
+        <h3>Medidas</h3>
+        <div class="measures-grid">
+          <div class="measure-item"><div class="mi-val">120 cm</div><div class="mi-label">Quadril</div></div>
+          <div class="measure-item"><div class="mi-val">104 cm</div><div class="mi-label">Cintura</div></div>
+          <div class="measure-item"><div class="mi-val">71 cm</div><div class="mi-label">Coxa</div></div>
+          <div class="measure-item"><div class="mi-val">35 cm</div><div class="mi-label">Braço</div></div>
+        </div>
+      </div>
+      <div class="profile-section">
+        <h3>Obstáculos</h3>
+        <span class="obstacle-tag">⚠️ Possíveis lesões</span>
+        <span class="obstacle-tag">🛋️ Sedentarismo</span>
+      </div>
+      <div class="profile-section">
+        <h3>Método</h3>
+        <div style="font-size:13px;color:var(--gray-text);line-height:1.6">
+          Treino com <strong style="color:var(--dark)">peso corporal</strong>. Sem progressão de carga — o foco é <strong style="color:var(--dark)">técnica, controle e consistência</strong>. A progressão acontece no volume, qualidade de execução e RPE percebido.
+        </div>
+      </div>
+      <div class="profile-section">
+        <h3>Escala de Esforço (RPE)</h3>
+        <div style="font-size:12.5px;line-height:2;color:var(--dark)">
+          <div><span style="font-weight:700;color:var(--red-deep)">RPE 6</span> — Confortável</div>
+          <div><span style="font-weight:700;color:var(--red-deep)">RPE 7</span> — Moderadamente difícil</div>
+          <div><span style="font-weight:700;color:var(--red-deep)">RPE 8</span> — Difícil, mas com margem</div>
+          <div><span style="font-weight:700;color:var(--red-deep)">RPE 9</span> — Quase no limite</div>
+          <div><span style="font-weight:700;color:var(--red-deep)">RPE 10</span> — Esforço máximo</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /scroll-area -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="goPage('treino',this)" id="nav-treino">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5 17.5 17.5M6.5 17.5 17.5 6.5" stroke-linecap="round"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/></svg>
+      Treino
+    </button>
+    <button class="nav-btn" onclick="goPage('guia',this)" id="nav-guia">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 6.5v11M7 9l5-2.5L17 9" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="3"/></svg>
+      Guia
+    </button>
+    <button class="nav-btn" onclick="goPage('eval',this)" id="nav-eval">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-linecap="round"/></svg>
+      Avaliação
+    </button>
+    <button class="nav-btn" onclick="goPage('perfil',this)" id="nav-perfil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke-linecap="round"/></svg>
+      Perfil
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== DATA =====================
+const WORKOUTS = {
+  A: {
+    label:"Treino A — Pernas e Core",
+    exercises:[
+      {id:"mob",name:"Mobilidade",series:"2 séries",reps:"45s",rest:"45s",goal:"Articulações",how:"Realize movimentos lentos e controlados buscando amplitude sem compensação.",focus:"Qualidade do movimento",error:"Fazer rápido com pouca amplitude",tip:"Priorize qualidade, não velocidade",mob:true},
+      {id:"a_aglivre",name:"Agachamento Livre",series:"3x10",reps:"10 rep",rest:"45s",goal:"Fortalecer pernas",how:"Flexione quadris e joelhos até onde consegue mantendo boa postura e retorne.",focus:"Peso distribuído nos pés e tronco firme",error:"Joelhos fechando pra dentro / coluna arredondando",tip:"Pense em sentar para trás"},
+      {id:"a_agimpuls",name:"Agachamento com Impulsão",series:"3x10",reps:"10 rep",rest:"45s",goal:"Desenvolver potência e coordenação",how:"Agacha e sobe ficando na ponta dos pés por 2s e volta primeiro com o pé inteiro no chão.",focus:"Explosão na subida e aterrissagem controlada",error:"Perder alinhamento",tip:"Inspira na subida e expira na descida"},
+      {id:"a_afundo",name:"Afundo Livre",series:"3x10",reps:"10 rep",rest:"45s",goal:"Fortalecer pernas e equilíbrio",how:"Dê um passo à frente, flexione os joelhos (perna da frente a 90°) e retorne fazendo força com a perna da frente.",focus:"Estabilidade e controle do movimento",error:"Inclinar muito o tronco ou perder equilíbrio",tip:"Mantenha o olhar num ponto fixo e o abdômen ativo"},
+      {id:"a_pant",name:"Extensão de Panturrilha",series:"3x15",reps:"15 rep",rest:"45s",goal:"Fortalecer panturrilha",how:"Eleve os calcanhares na ponta dos pés e desça lentamente.",focus:"Contração máxima no topo",error:"Balançar o corpo",tip:"Faça pausa de 2 segundos no alto"},
+      {id:"a_abd",name:"Sequência Abdominal",series:"3x10",reps:"10 rep",rest:"1min",goal:"Core",how:"Execute os exercícios mantendo o abdômen contraído toda a série.",focus:"Controle do tronco",error:"Puxar demais o pescoço ou perder a respiração",tip:"Sempre expire durante o esforço (contração)"},
+    ]
+  },
+  B:{
+    label:"Treino B — Membros Superiores e HIIT",
+    exercises:[
+      {id:"mob",name:"Mobilidade",series:"2 séries",reps:"45s",rest:"45s",goal:"Articulações",how:"Realize movimentos lentos e controlados buscando amplitude sem compensação.",focus:"Qualidade do movimento",error:"Fazer rápido com pouca amplitude",tip:"Priorize qualidade, não velocidade",mob:true},
+      {id:"b_flex",name:"Sequência de Flexão",series:"2x10",reps:"10 rep",rest:"1min",goal:"Desenvolver força nos membros superiores",how:"Realize as flexões conforme as variações propostas mantendo alinhamento corporal.",focus:"Peitoral / Tríceps / Estabilidade",error:"Quadril caído / cotovelos abertos",tip:"Expire na descida"},
+      {id:"b_core",name:"Sequência de Core (Lombar)",series:"3x10",reps:"10 rep",rest:"45s",goal:"Fortalecer estabilizadores de coluna",how:"Execute os movimentos controlados ativando abdômen e região lombar.",focus:"Estabilidade da coluna",error:"Compensar com excesso de movimento",tip:"Priorize qualidade em vez de velocidade"},
+      {id:"b_prancha",name:"Prancha com Toque no Ombro",series:"3x12",reps:"12 rep",rest:"45s",goal:"Melhorar estabilidade do core",how:"Em prancha alta toque alternadamente um ombro com a mão oposta sem girar o quadril.",focus:"Controle do quadril e abdômen",error:"Balançar demais o corpo",tip:"Afaste levemente os pés para mais estabilidade"},
+      {id:"b_triceps",name:"Tríceps no Banco",series:"3x12",reps:"12 rep",rest:"45s",goal:"Fortalecer tríceps",how:"Apoie as mãos no banco, flexione os cotovelos e empurre para subir.",focus:"Articulação dos cotovelos",error:"Ombros subir ou descer demais",tip:"Mantenha os cotovelos apontados para trás"},
+      {id:"b_hiit",name:"Sequência de HIIT",series:"3 séries",reps:"3 séries",rest:"2min",goal:"Melhorar condicionamento físico",how:"Alterne exercícios intensos com curto período de recuperação.",focus:"Intensidade durante os estímulos",error:"Diminuir demais o ritmo",tip:"Mantenha boa execução"},
+    ]
+  },
+  C:{
+    label:"Treino C — Glúteos e Adutores",
+    exercises:[
+      {id:"mob",name:"Mobilidade",series:"2 séries",reps:"45s",rest:"45s",goal:"Articulações",how:"Realize movimentos lentos e controlados buscando amplitude sem compensação.",focus:"Qualidade do movimento",error:"Fazer rápido com pouca amplitude",tip:"Priorize qualidade, não velocidade",mob:true},
+      {id:"c_aginsist",name:"Agachamento com Insistência",series:"3x12",reps:"12 rep",rest:"45s",goal:"Aumentar resistência e controle do quad",how:"Faça o agachamento mantendo 2 pequenas pausas agachada e volta.",focus:"Tensão contínua",error:"Relaxar no final do movimento",tip:"Controle a descida e mantenha o músculo da coxa tensionado"},
+      {id:"c_aglat",name:"Agachamento Lateral",series:"3x12",reps:"12 rep",rest:"45s",goal:"Adutores / Glúteo",how:"Afaste os pés e agache alternando para cada lado mantendo o outro joelho estendido.",focus:"Abertura do quadril",error:"Joelhos fechando",tip:"Mantenha o tronco firme"},
+      {id:"c_cadeira",name:"Cadeirinha na Parede",series:"3x45s",reps:"45 seg",rest:"45s",goal:"Resistência isométrica das pernas",how:"Apoie as costas na parede e mantenha os joelhos dobrados a 90 graus.",focus:"Permanecer estável durante todo o movimento",error:"Inclinar demais o tronco",tip:"Respiração normal e abdômen ativo"},
+      {id:"c_elevpelv",name:"Elevação Pélvica no Sofá",series:"3x12",reps:"12 rep",rest:"45s",goal:"Fortalecer glúteos / posteriores",how:"Apoie as costas no sofá, eleve o quadril contraindo os posteriores de coxa e glúteos. Mantenha 2s e volte controlado.",focus:"Contração do glúteo no topo",error:"Arquear a lombar",tip:"Pense em empurrar o chão com os calcanhares"},
+      {id:"c_sumo",name:"Agachamento Sumo",series:"3x12",reps:"12 rep",rest:"45s",goal:"Fortalecer glúteos / adutores",how:"Posicione os pés mais afastados e pontas levemente para fora, agache e retorne.",focus:"Abrir os joelhos acompanhando os pés",error:"Joelhos fechados ou panturrilha inclinada pra frente",tip:"Mantenha o peito aberto e abdômen firme"},
+      {id:"c_abd",name:"Sequência Abdominal",series:"3 séries",reps:"3 séries",rest:"1min",goal:"Core",how:"Execute os exercícios mantendo o abdômen contraído toda a série.",focus:"Controle do tronco",error:"Puxar demais o pescoço ou perder a respiração",tip:"Sempre expire durante o esforço (contração)"},
+    ]
+  }
+};
+
+// ===================== STATE =====================
+let currentWorkout = 'A';
+let checks = {};       // {exId: bool}
+let rpeVals = {};      // {exId: string}
+let obsVals = {};      // {exId: string}
+let weekDays = {};     // {0..6: bool}
+let evalHistory = JSON.parse(localStorage.getItem('eval_history')||'[]');
+let guideOpen = null;
+
+// restore state
+try{
+  let s=JSON.parse(localStorage.getItem('workout_state')||'{}');
+  checks=s.checks||{}; rpeVals=s.rpeVals||{}; obsVals=s.obsVals||{}; weekDays=s.weekDays||{};
+}catch(e){}
+
+function saveState(){
+  localStorage.setItem('workout_state',JSON.stringify({checks,rpeVals,obsVals,weekDays}));
+}
+
+// ===================== NAV =====================
+function goPage(p, btn){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('scroll-area').scrollTop=0;
+  const titles={treino:'MEU TREINO',guia:'GUIA DE EXECUÇÃO',eval:'AVALIAÇÃO',perfil:'BEATRIZ LEONEL'};
+  const subs={treino:'Selecione o treino do dia',guia:'Técnica e execução dos exercícios',eval:'Registro e histórico semanal',perfil:'Dados e perfil da aluna'};
+  document.getElementById('page-title').textContent=titles[p];
+  document.getElementById('page-sub').textContent=subs[p];
+  if(p==='eval') renderHistory();
+}
+
+// ===================== WORKOUT =====================
+function selectWorkout(w, btn){
+  currentWorkout=w;
+  document.querySelectorAll('.wtab').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+  renderExercises();
+}
+
+function renderExercises(){
+  const wk=WORKOUTS[currentWorkout];
+  const list=document.getElementById('exercise-list');
+  list.innerHTML='';
+  // Render each exercise
+  wk.exercises.forEach(ex=>{
+    if(ex.mob){
+      list.innerHTML+=`<div class="mob-card">
+        <div class="mob-icon">🔄</div>
+        <div class="mob-text">
+          <h3>${ex.name}</h3>
+          <p>${ex.series} · ${ex.rest} descanso · Leve</p>
+        </div>
+      </div>`;
+      return;
+    }
+    const isDone=!!checks[currentWorkout+'_'+ex.id];
+    const rpeVal=rpeVals[currentWorkout+'_'+ex.id]||'';
+    const obsVal=obsVals[currentWorkout+'_'+ex.id]||'';
+    list.innerHTML+=`
+    <div class="ex-card ${isDone?'done':''}" id="card-${ex.id}">
+      <div class="ex-header">
+        <div class="ex-check ${isDone?'checked':''}" onclick="toggleCheck('${ex.id}')">
+          ${isDone?'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><path d="M5 12l5 5L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}
+        </div>
+        <div class="ex-info">
+          <div class="ex-name">${ex.name}</div>
+          <div class="ex-badges">
+            <span class="badge">${ex.series}</span>
+            <span class="badge rest">⏱ ${ex.rest}</span>
+          </div>
+          <div class="ex-goal">${ex.goal}</div>
+        </div>
+      </div>
+      <div class="ex-actions">
+        <input class="obs-input" type="text" placeholder="Observação..." value="${obsVal}" oninput="saveObs('${ex.id}',this.value)"/>
+        <select class="rpe-select" onchange="saveRpe('${ex.id}',this.value)">
+          <option value="">RPE</option>
+          <option value="6" ${rpeVal==='6'?'selected':''}>RPE 6</option>
+          <option value="7" ${rpeVal==='7'?'selected':''}>RPE 7</option>
+          <option value="8" ${rpeVal==='8'?'selected':''}>RPE 8</option>
+          <option value="9" ${rpeVal==='9'?'selected':''}>RPE 9</option>
+          <option value="10" ${rpeVal==='10'?'selected':''}>RPE 10</option>
+        </select>
+      </div>
+    </div>`;
+  });
+  updateProgress();
+}
+
+function toggleCheck(exId){
+  const key=currentWorkout+'_'+exId;
+  checks[key]=!checks[key];
+  saveState();
+  renderExercises();
+  if(checks[key]) showToast('✓ Exercício concluído!');
+}
+
+function saveObs(exId,val){
+  obsVals[currentWorkout+'_'+exId]=val;
+  saveState();
+}
+
+function saveRpe(exId,val){
+  rpeVals[currentWorkout+'_'+exId]=val;
+  saveState();
+}
+
+function updateProgress(){
+  const wk=WORKOUTS[currentWorkout];
+  const exes=wk.exercises.filter(e=>!e.mob);
+  const done=exes.filter(e=>checks[currentWorkout+'_'+e.id]).length;
+  const total=exes.length;
+  document.getElementById('prog-count').textContent=done+' / '+total;
+  document.getElementById('prog-bar').style.width=(total===0?0:Math.round(done/total*100))+'%';
+}
+
+// Week tracker
+function renderWeekDays(){
+  const labels=['DOM','SEG','TER','QUA','QUI','SEX','SÁB'];
+  const el=document.getElementById('week-days');
+  el.innerHTML='';
+  labels.forEach((l,i)=>{
+    el.innerHTML+=`<div class="wday">
+      <span class="wday-label">${l}</span>
+      <div class="wday-dot ${weekDays[i]?'active':''}" onclick="toggleDay(${i})">
+        ${weekDays[i]?'✓':''}
+      </div>
+    </div>`;
+  });
+}
+
+function toggleDay(i){
+  weekDays[i]=!weekDays[i];
+  saveState();
+  renderWeekDays();
+}
+
+// ===================== GUIDE =====================
+function getAllExercises(){
+  const all={};
+  Object.values(WORKOUTS).forEach(w=>w.exercises.forEach(e=>{if(!all[e.name])all[e.name]=e;}));
+  return Object.values(all);
+}
+
+function renderGuide(filter=''){
+  const exes=getAllExercises();
+  const list=document.getElementById('guide-list');
+  list.innerHTML='';
+  const filtered=filter?exes.filter(e=>e.name.toLowerCase().includes(filter.toLowerCase())):exes;
+  if(filtered.length===0){list.innerHTML='<div class="hist-empty">Nenhum exercício encontrado.</div>';return;}
+  filtered.forEach(ex=>{
+    const isOpen=guideOpen===ex.name;
+    list.innerHTML+=`
+    <div class="guide-card ${isOpen?'open':''}" id="gc-${ex.name.replace(/\s/g,'_')}" onclick="toggleGuide('${ex.name.replace(/'/g,"\\'")}')">
+      <div class="guide-card-header">
+        <h3>${ex.name}</h3>
+        <span class="chevron">▼</span>
+      </div>
+      ${isOpen?`<div class="guide-body">
+        <div class="guide-row"><span class="guide-label">Como fazer</span><span class="guide-val">${ex.how||'—'}</span></div>
+        <div class="guide-row"><span class="guide-label">Foco</span><span class="guide-val">${ex.focus||'—'}</span></div>
+        <div class="guide-row"><span class="guide-label">Objetivo</span><span class="guide-val">${ex.goal||'—'}</span></div>
+        <div class="guide-row"><span class="guide-label">Erro comum</span><span class="guide-val"><span class="warn-tag">⚠ ${ex.error||'—'}</span></span></div>
+        <div class="guide-row"><span class="guide-label">Dica</span><span class="guide-val">💡 ${ex.tip||'—'}</span></div>
+      </div>`:''}
+    </div>`;
+  });
+}
+
+function toggleGuide(name){
+  guideOpen = guideOpen===name ? null : name;
+  renderGuide(document.getElementById('guide-search').value);
+}
+
+function filterGuide(val){
+  guideOpen=null;
+  renderGuide(val);
+}
+
+// ===================== EVAL =====================
+const SLIDER_LABELS = {
+  humor:  ['','Muito baixo','Baixo','Regular','Bom','Ótimo 😄'],
+  energia:['','Muito baixa','Baixa','Regular','Boa','Alta ⚡'],
+  dific:  ['','Muito fácil','Fácil','Moderada','Difícil','Muito difícil 🔥'],
+  sono:   ['','Muito ruim','Ruim','Regular','Bom','Ótimo 🌙'],
+  alim:   ['','Muito ruim','Ruim','Regular','Boa','Ótima 🥗'],
+};
+
+function updateSliderLabel(field, val){
+  const el = document.getElementById('label-'+field);
+  if(el) el.textContent = SLIDER_LABELS[field][parseInt(val)] || '';
+}
+
+function initSliders(){
+  ['humor','energia','dific','sono','alim'].forEach(f=>{
+    updateSliderLabel(f, document.getElementById('slider-'+f)?.value || 3);
+  });
+}
+
+function getSliderVals(){
+  const get = id => parseInt(document.getElementById(id)?.value || 3);
+  return {
+    humor: get('slider-humor'),
+    energia: get('slider-energia'),
+    dific: get('slider-dific'),
+    sono: get('slider-sono'),
+    alim: get('slider-alim'),
+  };
+}
+
+function resetSliders(){
+  ['humor','energia','dific','sono','alim'].forEach(f=>{
+    const el = document.getElementById('slider-'+f);
+    if(el){ el.value=3; updateSliderLabel(f, 3); }
+  });
+}
+
+function saveEval(){
+  const week=document.getElementById('eval-week').value;
+  if(!week){showToast('Selecione a semana!');return;}
+  const sv=getSliderVals();
+  const entry={
+    week, date:new Date().toLocaleDateString('pt-BR'),
+    freq:document.getElementById('eval-freq').value,
+    humor:sv.humor, energia:sv.energia, dific:sv.dific,
+    dor:document.getElementById('eval-dor').value,
+    sono:sv.sono, alim:sv.alim,
+    obs:document.getElementById('eval-obs').value
+  };
+  const idx=evalHistory.findIndex(e=>e.week===week);
+  if(idx>=0) evalHistory[idx]=entry; else evalHistory.unshift(entry);
+  evalHistory.sort((a,b)=>parseInt(b.week)-parseInt(a.week));
+  localStorage.setItem('eval_history',JSON.stringify(evalHistory));
+  showToast('✅ Registro salvo!');
+  document.getElementById('eval-week').value='';
+  document.getElementById('eval-freq').value='';
+  document.getElementById('eval-dor').value='';
+  document.getElementById('eval-obs').value='';
+  resetSliders();
+  renderHistory();
+}
+
+function renderHistory(){
+  const el=document.getElementById('hist-list');
+  if(evalHistory.length===0){
+    el.innerHTML='<div class="hist-empty">Nenhum registro ainda.<br>Preencha sua primeira avaliação acima! 💪</div>';
+    return;
+  }
+  const starStr=(n,icon)=>icon.repeat(Math.max(0,n))+'<span style="opacity:.25">'+icon.repeat(Math.max(0,5-n))+'</span>';
+  el.innerHTML=evalHistory.map(e=>`
+    <div class="hist-week">
+      <div class="hist-week-header">
+        <h3>Semana ${e.week}</h3>
+        <span class="hist-badge">${e.date}</span>
+      </div>
+      <div class="hist-grid">
+        <div class="hist-item"><div class="hi-label">Frequência</div><div class="hi-val">${e.freq||'—'}x</div></div>
+        <div class="hist-item"><div class="hi-label">Dor</div><div class="hi-val" style="font-size:11px">${e.dor||'—'}</div></div>
+        <div class="hist-item"><div class="hi-label">Humor</div><div class="hi-val" style="font-size:11px">${starStr(e.humor,'😊')}</div></div>
+        <div class="hist-item"><div class="hi-label">Energia</div><div class="hi-val" style="font-size:11px">${starStr(e.energia,'⚡')}</div></div>
+        <div class="hist-item"><div class="hi-label">Sono</div><div class="hi-val" style="font-size:11px">${starStr(e.sono,'🌙')}</div></div>
+        <div class="hist-item"><div class="hi-label">Alimentação</div><div class="hi-val" style="font-size:11px">${starStr(e.alim,'🥗')}</div></div>
+      </div>
+      ${e.obs?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--gray-light);font-size:12px;color:var(--gray-text);line-height:1.5">"${e.obs}"</div>`:''}
+    </div>
+  `).join('');
+}
+
+// ===================== TOAST =====================
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ===================== INIT =====================
+renderExercises();
+renderWeekDays();
+renderGuide();
+initSliders();
+</script>
+</body>
+</html>
