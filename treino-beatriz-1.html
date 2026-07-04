@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Beatriz · Consultoria de Treino</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#F5F7FA;
+  --offwhite:#FFFFFF;
+  --card:#FFFFFF;
+  --border:#E2E8F0;
+  --red:#DC2626;
+  --red-light:#FEF2F2;
+  --red-mid:#FCA5A5;
+  --red-dark:#991B1B;
+  --blue:#2563EB;
+  --blue-light:#EFF6FF;
+  --blue-mid:#93C5FD;
+  --blue-dark:#1E3A8A;
+  --text:#0F172A;
+  --text2:#475569;
+  --text3:#94A3B8;
+  --shadow:rgba(15,23,42,0.07);
+  --green:#16A34A;
+  --green-light:#DCFCE7;
+}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;max-width:430px;margin:0 auto;overflow-x:hidden}
+
+#splash{position:fixed;inset:0;background:var(--offwhite);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;transition:opacity .5s}
+#splash.hide{opacity:0;pointer-events:none}
+.splash-mono{width:76px;height:76px;border-radius:16px;background:linear-gradient(135deg,var(--red),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:800;color:white;margin-bottom:16px;box-shadow:0 8px 28px rgba(220,38,38,.25)}
+.splash-name{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:700;color:var(--text);letter-spacing:.02em;margin-bottom:4px}
+.splash-sub{font-size:11px;text-transform:uppercase;letter-spacing:.2em;color:var(--text3);font-weight:500}
+.splash-dots{display:flex;gap:8px;margin-top:28px}
+.splash-dot{width:7px;height:7px;border-radius:50%;background:var(--border);animation:pulse 1.4s ease-in-out infinite}
+.splash-dot:nth-child(2){animation-delay:.2s}
+.splash-dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{background:var(--border)}40%{background:var(--red-mid)}}
+
+#app{display:none;padding-bottom:82px}
+#app.visible{display:block}
+
+.header{background:var(--offwhite);border-bottom:2px solid var(--red);padding:14px 20px;position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px var(--shadow)}
+.header-brand{display:flex;align-items:center;gap:10px}
+.h-avatar{width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--red),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;color:white}
+.h-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text);letter-spacing:.02em}
+.h-sub{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-top:1px;font-weight:500}
+.sync-badge{font-size:10px;color:var(--text3);display:flex;align-items:center;gap:4px;font-weight:500}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--offwhite);border-top:2px solid var(--border);display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:50;box-shadow:0 -3px 14px var(--shadow)}
+.nav-btn{flex:1;padding:10px 4px 8px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--text3);font-size:10px;font-family:'Barlow',sans-serif;font-weight:600;transition:color .2s;text-transform:uppercase;letter-spacing:.05em}
+.nav-btn.active{color:var(--red)}
+.nav-icon{font-size:19px;line-height:1}
+
+.content{padding:16px}
+.screen{display:none}
+.screen.active{display:block}
+
+.dica-box{background:linear-gradient(135deg,var(--blue-light),#FFF);border:1px solid var(--blue-mid);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start}
+.dica-icon{width:30px;height:30px;border-radius:8px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:white;font-weight:700}
+.dica-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue-dark);font-weight:700;margin-bottom:3px}
+.dica-text{font-size:13px;color:var(--text);line-height:1.5;font-weight:400}
+
+.alert-box{background:var(--red-light);border:1px solid var(--red-mid);border-left:4px solid var(--red);border-radius:8px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--red-dark);line-height:1.5;font-weight:500}
+.alert-box strong{font-size:11px;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px;font-weight:700}
+
+.week-bar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 8px var(--shadow)}
+.week-nav{background:none;border:none;cursor:pointer;color:var(--red);font-size:22px;padding:4px 10px;border-radius:8px;font-weight:700}
+.week-nav:active{background:var(--red-light)}
+.week-nav:disabled{color:var(--border);cursor:default}
+.week-center{text-align:center}
+.week-lbl{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.12em;font-weight:600}
+.week-num{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:800;color:var(--text);line-height:1.1}
+
+.treino-tabs{display:flex;gap:7px;margin-bottom:14px}
+.t-tab{flex:1;text-align:center;padding:11px 0;border-radius:10px;font-size:13px;font-weight:700;background:var(--card);border:1.5px solid var(--border);color:var(--text3);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.05em;font-family:'Barlow Condensed',sans-serif}
+.t-tab.active{background:var(--red);border-color:var(--red);color:white}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px var(--shadow)}
+.card-title{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:2px;letter-spacing:.02em}
+.card-sub{font-size:12px;color:var(--text3);margin-bottom:12px;font-weight:500}
+
+.ex-item{border-bottom:1px solid var(--border);padding:12px 0}
+.ex-item:last-child{border-bottom:none;padding-bottom:4px}
+.ex-top{display:flex;align-items:center;gap:12px}
+.ex-check{width:28px;height:28px;border-radius:8px;border:2px solid var(--border);background:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;color:transparent;font-size:14px;font-weight:700;transition:all .2s}
+.ex-check.done{background:var(--green);border-color:var(--green);color:white}
+.ex-info{flex:1}
+.ex-name{font-size:14px;font-weight:600;color:var(--text)}
+.ex-item.done-ex .ex-name{color:var(--text3);text-decoration:line-through}
+.ex-meta{font-size:11px;color:var(--text3);margin-top:2px;font-weight:500}
+.ex-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:6px;font-weight:700;margin-left:4px;background:var(--blue-light);color:var(--blue-dark)}
+
+.finish-btn{width:100%;padding:16px;border-radius:12px;background:var(--red);border:none;color:white;font-size:15px;font-weight:700;font-family:'Barlow Condensed',sans-serif;cursor:pointer;margin-top:16px;box-shadow:0 4px 16px rgba(220,38,38,.3);transition:opacity .2s;text-transform:uppercase;letter-spacing:.06em}
+.finish-btn:active{opacity:.85}
+.finish-btn:disabled{background:var(--border);color:var(--text3);box-shadow:none;cursor:default}
+
+.rpe-legend{background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:12px;padding:14px;margin-bottom:12px}
+.rpe-legend h4{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--blue-dark);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em}
+.rpe-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:12px}
+.rpe-row:last-child{margin-bottom:0}
+.rpe-circle{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;font-family:'Barlow Condensed',sans-serif}
+.rpe-val{font-weight:700;color:var(--text)}
+.rpe-desc{color:var(--text2);font-size:11px}
+.guia-search{background:white;border:1px solid var(--border);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:8px;margin-bottom:12px;box-shadow:0 2px 6px var(--shadow)}
+.guia-search input{border:none;outline:none;flex:1;font-size:14px;font-family:'Barlow',sans-serif;color:var(--text);background:transparent;font-weight:400}
+.guia-item{border-bottom:1px solid var(--border);padding:13px 0}
+.guia-item:last-child{border-bottom:none}
+.guia-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:.02em}
+.guia-row{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+.guia-tag{flex-shrink:0;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:5px;margin-top:1px;white-space:nowrap}
+.tag-como{background:#DCFCE7;color:#166534}
+.tag-erro{background:var(--red-light);color:var(--red-dark)}
+.tag-dica{background:var(--blue-light);color:var(--blue-dark)}
+.guia-row p{margin:0;font-size:12.5px;line-height:1.45;color:var(--text2)}
+
+.aval-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px var(--shadow)}
+.aval-week-title{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:8px;text-transform:uppercase;letter-spacing:.04em}
+.aval-badge{font-size:10px;padding:3px 8px;border-radius:6px;background:var(--border);color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.aval-badge.filled{background:var(--green-light);color:var(--green)}
+.aval-field{margin-bottom:14px}
+.aval-lbl{font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;display:block}
+.aval-scale{display:flex;gap:5px}
+.aval-btn{flex:1;padding:10px 0;border-radius:8px;font-size:14px;font-weight:700;border:2px solid var(--border);background:white;color:var(--text3);cursor:pointer;font-family:'Barlow',sans-serif;transition:all .15s}
+.aval-btn.sel{border-color:var(--red);color:var(--red-dark);background:var(--red-light);text-decoration:underline;text-underline-offset:3px}
+.aval-nota{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:12px;font-weight:400}
+.aval-nota:focus{border-color:var(--blue-mid)}
+.aval-save{width:100%;padding:14px;border-radius:10px;background:var(--blue);border:none;color:white;font-size:14px;font-weight:700;font-family:'Barlow Condensed',sans-serif;cursor:pointer;transition:opacity .2s;text-transform:uppercase;letter-spacing:.05em}
+.aval-save:active{opacity:.85}
+
+.perfil-avatar{width:72px;height:72px;border-radius:16px;background:linear-gradient(135deg,var(--red),var(--blue));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:800;color:white;margin:0 auto 16px;box-shadow:0 4px 16px rgba(220,38,38,.2)}
+.perfil-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-weight:700;margin-bottom:4px}
+.perfil-val{background:var(--bg);border-radius:8px;padding:11px 13px;font-size:14px;color:var(--text);margin-bottom:10px;font-weight:500}
+.perfil-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.perfil-item{background:var(--bg);border-radius:8px;padding:11px;text-align:center}
+.perfil-item-val{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--text)}
+.perfil-item-lbl{font-size:10px;color:var(--text3);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.peso-row{display:flex;align-items:center;gap:8px;margin:14px 0 8px}
+.peso-lbl{font-size:12px;color:var(--text3);flex-shrink:0;font-weight:600}
+.peso-ctrl{display:flex;align-items:center;border:2px solid var(--border);border-radius:10px;overflow:hidden}
+.peso-btn{width:38px;height:38px;background:var(--bg);border:none;cursor:pointer;font-size:20px;color:var(--red);font-weight:700}
+.peso-val{min-width:68px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;color:var(--text);border-left:2px solid var(--border);border-right:2px solid var(--border);height:38px;line-height:38px;background:white}
+.peso-unit{font-size:11px;color:var(--text3);font-weight:600}
+.peso-save{padding:10px 20px;border-radius:8px;background:var(--red);border:none;color:white;font-size:13px;font-weight:700;font-family:'Barlow Condensed',sans-serif;cursor:pointer;display:block;margin-top:8px;text-transform:uppercase;letter-spacing:.04em}
+.obj-box{background:var(--blue-light);border:1px solid var(--blue-mid);border-radius:10px;padding:14px;margin-top:12px}
+.obj-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--blue-dark);font-weight:700;margin-bottom:6px}
+.obj-text{font-size:14px;color:var(--text);line-height:1.4;font-weight:500}
+
+.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:white;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;z-index:200;font-family:'Barlow',sans-serif}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div id="splash">
+  <div class="splash-mono">B</div>
+  <div class="splash-name">Beatriz</div>
+  <div class="splash-sub">Consultoria de Treino</div>
+  <div class="splash-dots">
+    <div class="splash-dot"></div><div class="splash-dot"></div><div class="splash-dot"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="header">
+    <div class="header-brand">
+      <div class="h-avatar">B</div>
+      <div>
+        <div class="h-name">Beatriz</div>
+        <div class="h-sub">Consultoria de Treino</div>
+      </div>
+    </div>
+    <div class="sync-badge">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-txt">online</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- TREINO -->
+    <div class="screen active" id="screen-treino">
+      <div class="dica-box">
+        <div class="dica-icon">💡</div>
+        <div>
+          <div class="dica-label">Dica do Treino</div>
+          <div class="dica-text">Mantenha a respiração controlada para contração do abdômen — isso melhora a maioria dos movimentos.</div>
+        </div>
+      </div>
+      <div class="alert-box">
+        <strong>⚠️ Atenção</strong>
+        Treino adaptado para início de atividade física. Respeite os limites do corpo e avise caso sinta dor articular ou desconforto incomum.
+      </div>
+      <div class="week-bar">
+        <button class="week-nav" id="prev-week" onclick="changeWeek(-1)">‹</button>
+        <div class="week-center">
+          <div class="week-lbl">Semana</div>
+          <div class="week-num" id="week-display">1</div>
+        </div>
+        <button class="week-nav" id="next-week" onclick="changeWeek(1)">›</button>
+      </div>
+      <div class="treino-tabs" id="treino-tabs"></div>
+      <div id="treino-body"></div>
+    </div>
+
+    <!-- GUIA -->
+    <div class="screen" id="screen-guia">
+      <div class="rpe-legend">
+        <h4>Escala de Intensidade RPE</h4>
+        <div class="rpe-row"><div class="rpe-circle" style="background:#DCFCE7;color:#166534">6</div><div><div class="rpe-val">RPE 6</div><div class="rpe-desc">Confortável — boa técnica sem esforço</div></div></div>
+        <div class="rpe-row"><div class="rpe-circle" style="background:var(--blue-light);color:var(--blue-dark)">7</div><div><div class="rpe-val">RPE 7</div><div class="rpe-desc">Moderadamente difícil — consegue conversar</div></div></div>
+        <div class="rpe-row"><div class="rpe-circle" style="background:#FEF9C3;color:#854D0E">8</div><div><div class="rpe-val">RPE 8</div><div class="rpe-desc">Difícil mas com margem — 2 reps na reserva</div></div></div>
+        <div class="rpe-row"><div class="rpe-circle" style="background:var(--red-light);color:var(--red-dark)">9</div><div><div class="rpe-val">RPE 9</div><div class="rpe-desc">Quase no limite — 1 rep na reserva</div></div></div>
+        <div class="rpe-row"><div class="rpe-circle" style="background:#FEE2E2;color:#7F1D1D">10</div><div><div class="rpe-val">RPE 10</div><div class="rpe-desc">Esforço máximo — falha muscular</div></div></div>
+      </div>
+      <div class="guia-search"><span>🔎</span><input type="text" id="guia-search" placeholder="Buscar exercício..."></div>
+      <div class="card" id="guia-list"></div>
+    </div>
+
+    <!-- AVALIAÇÃO -->
+    <div class="screen" id="screen-aval">
+      <div id="aval-content"></div>
+    </div>
+
+    <!-- PERFIL -->
+    <div class="screen" id="screen-perfil">
+      <div class="card">
+        <div class="perfil-avatar">B</div>
+        <div class="perfil-lbl">Nome</div>
+        <div class="perfil-val">Beatriz Leonel Borges</div>
+        <div class="perfil-lbl">Idade</div>
+        <div class="perfil-val">27 anos</div>
+        <div class="perfil-lbl">Medidas iniciais</div>
+        <div class="perfil-grid">
+          <div class="perfil-item"><div class="perfil-item-val">120cm</div><div class="perfil-item-lbl">Quadril</div></div>
+          <div class="perfil-item"><div class="perfil-item-val">104cm</div><div class="perfil-item-lbl">Cintura</div></div>
+          <div class="perfil-item"><div class="perfil-item-val">71cm</div><div class="perfil-item-lbl">Coxa</div></div>
+          <div class="perfil-item"><div class="perfil-item-val">35cm</div><div class="perfil-item-lbl">Braço</div></div>
+        </div>
+        <div class="perfil-lbl">Obstáculos</div>
+        <div class="perfil-val">Possíveis lesões · Sedentarismo</div>
+        <div class="peso-row">
+          <span class="peso-lbl">Peso:</span>
+          <div class="peso-ctrl">
+            <button class="peso-btn" onclick="adjPeso(-0.5)">−</button>
+            <div class="peso-val" id="peso-edit">88,0</div>
+            <button class="peso-btn" onclick="adjPeso(0.5)">+</button>
+          </div>
+          <span class="peso-unit">kg</span>
+        </div>
+        <button class="peso-save" onclick="savePeso()">Salvar Peso</button>
+        <div class="obj-box">
+          <div class="obj-lbl">Objetivo</div>
+          <div class="obj-text">Saúde física · Emagrecimento 💪</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-treino" onclick="switchTab('treino')"><span class="nav-icon">⚡</span><span>Treino</span></button>
+  <button class="nav-btn" id="nav-guia" onclick="switchTab('guia')"><span class="nav-icon">📋</span><span>Guia</span></button>
+  <button class="nav-btn" id="nav-aval" onclick="switchTab('aval')"><span class="nav-icon">📊</span><span>Avaliação</span></button>
+  <button class="nav-btn" id="nav-perfil" onclick="switchTab('perfil')"><span class="nav-icon">👤</span><span>Perfil</span></button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var FIREBASE_URL = 'https://helloradana-consultoria-default-rtdb.firebaseio.com';
+var ALUNO_ID = 'beatriz';
+var state = {};
+try { state = JSON.parse(localStorage.getItem('beatriz-state') || '{}'); } catch(e) { state = {}; }
+
+function saveState() {
+  state._updated = new Date().toISOString();
+  try { localStorage.setItem('beatriz-state', JSON.stringify(state)); } catch(e) {}
+  fetch(FIREBASE_URL + '/alunos/' + ALUNO_ID + '/state.json', {
+    method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(state)
+  }).then(function() {
+    document.getElementById('sync-dot').style.background = 'var(--green)';
+    document.getElementById('sync-txt').textContent = 'salvo';
+    setTimeout(function() { document.getElementById('sync-txt').textContent = 'online'; }, 2000);
+  }).catch(function() {
+    document.getElementById('sync-dot').style.background = '#DC2626';
+    document.getElementById('sync-txt').textContent = 'offline';
+  });
+}
+
+function loadFromFirebase(cb) {
+  fetch(FIREBASE_URL + '/alunos/' + ALUNO_ID + '/state.json')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d && d._updated && d._updated > (state._updated || '')) {
+        state = d;
+        try { localStorage.setItem('beatriz-state', JSON.stringify(state)); } catch(e) {}
+      }
+      if (cb) cb();
+    }).catch(function() { if (cb) cb(); });
+}
+
+var TOTAL_WEEKS = 13;
+var currentWeek = 1;
+var currentTreino = 'A';
+var pendingAvals = {};
+var currentPeso = 88;
+
+var TREINOS = {
+  A: {
+    name: 'Treino A', focus: 'Pernas · Glúteos · Panturrilha',
+    exercises: [
+      {id:'mob-a',   nome:'Mobilidade',                    series:'2', reps:'45s',   obj:'Articulações'},
+      {id:'agach-l', nome:'Agachamento Livre',             series:'3', reps:'10',    obj:'Fortalecer pernas'},
+      {id:'agach-i', nome:'Agachamento com Impulsão',      series:'3', reps:'10',    obj:'Potência e coordenação'},
+      {id:'afundo',  nome:'Afundo Livre',                  series:'3', reps:'10',    obj:'Fortalecer pernas e equilíbrio'},
+      {id:'pant',    nome:'Extensão de Panturrilha',       series:'3', reps:'15',    obj:'Fortalecer panturrilha'},
+      {id:'abd-a',   nome:'Sequência Abdominal',           series:'3', reps:'10',    obj:'Core'}
+    ]
+  },
+  B: {
+    name: 'Treino B', focus: 'Membros Superiores · Core · HIIT',
+    exercises: [
+      {id:'mob-b',   nome:'Mobilidade',                    series:'2', reps:'45s',   obj:'Articulações'},
+      {id:'flexao',  nome:'Sequência de Flexão',           series:'2', reps:'10',    obj:'Força membros superiores'},
+      {id:'core-l',  nome:'Sequência de Core (Lombar)',    series:'3', reps:'10',    obj:'Estabilizadores de coluna'},
+      {id:'prancha', nome:'Prancha com Toque no Ombro',    series:'3', reps:'12',    obj:'Estabilidade do core'},
+      {id:'triceps', nome:'Tríceps no Banco',              series:'3', reps:'12',    obj:'Fortalecer tríceps'},
+      {id:'hiit',    nome:'Sequência de HIIT',             series:'3', reps:'2min',  obj:'Condicionamento físico'}
+    ]
+  },
+  C: {
+    name: 'Treino C', focus: 'Glúteos · Adutores · Resistência',
+    exercises: [
+      {id:'mob-c',   nome:'Mobilidade',                    series:'2', reps:'45s',   obj:'Articulações'},
+      {id:'agach-ins',nome:'Agachamento com Insistência',  series:'3', reps:'12',    obj:'Resistência e controle do quad'},
+      {id:'agach-lat',nome:'Agachamento Lateral',          series:'3', reps:'12',    obj:'Adutores e glúteo'},
+      {id:'cadeirinha',nome:'Cadeirinha na Parede',        series:'3', reps:'45s',   obj:'Resistência isométrica'},
+      {id:'elev-p',  nome:'Elevação Pélvica no Sofá',      series:'3', reps:'12',    obj:'Glúteos e posteriores'},
+      {id:'sumo',    nome:'Agachamento Sumo',              series:'3', reps:'12',    obj:'Glúteos e adutores'},
+      {id:'abd-c',   nome:'Sequência Abdominal',           series:'3', reps:'1min',  obj:'Core'}
+    ]
+  }
+};
+
+var GUIA_DATA = [
+  {nome:'Mobilidade', como:'Realize movimentos lentos e controlados buscando amplitude sem compensação.', erro:'Fazer rápido e sem amplitude.', dica:'Movimento devagar — execute toda amplitude confortável.'},
+  {nome:'Agachamento Livre', como:'Flexione quadris e joelhos até onde consegue mantendo boa postura e retorne.', erro:'Joelhos fechados para dentro / coluna arredondando.', dica:'Pense em sentar para trás.'},
+  {nome:'Agachamento com Impulsão', como:'Agacha e sobe ficando na ponta dos pés por 2 segundos e volte primeiro com o pé inteiro no chão para depois realizar novamente.', erro:'Perder alinhamento.', dica:'Inspira na subida e expira na descida.'},
+  {nome:'Afundo Livre', como:'Dê um passo à frente, flexione os joelhos deixando a perna da frente dobrar o joelho em 90 graus e retorne fazendo força com a perna da frente.', erro:'Inclinar muito o tronco ou perder equilíbrio.', dica:'Mantenha o olhar num ponto fixo e o abdômen ativo.'},
+  {nome:'Extensão de Panturrilha', como:'Eleve os calcanhares na ponta dos pés e desça lentamente.', erro:'Balançar o corpo.', dica:'Faça pausa de 2 segundos no alto.'},
+  {nome:'Sequência Abdominal', como:'Execute os exercícios mantendo o abdômen contraído toda a série.', erro:'Puxar demais o pescoço ou perder a respiração.', dica:'Sempre expire durante o esforço (contração).'},
+  {nome:'Sequência de Flexão', como:'Realize as flexões conforme as variações propostas mantendo alinhamento corporal.', erro:'Quadril caído / cotovelos abertos.', dica:'Expire na descida.'},
+  {nome:'Sequência de Core (Lombar)', como:'Execute os movimentos controlados ativando abdômen e região lombar.', erro:'Compensar com excesso de movimento.', dica:'Priorize qualidade em vez de velocidade — faça controlado.'},
+  {nome:'Prancha com Toque no Ombro', como:'Em prancha alta, toque alternadamente um ombro com a mão oposta sem girar o quadril.', erro:'Balançar demais o corpo.', dica:'Afaste levemente os pés para mais estabilidade.'},
+  {nome:'Tríceps no Banco', como:'Apoie as mãos no banco, flexione os cotovelos e empurre para subir, levando só até a amplitude confortável.', erro:'Ombros subir ou descer demais.', dica:'Mantenha os cotovelos apontados para trás.'},
+  {nome:'Sequência de HIIT', como:'Alterne exercícios intensos com curto período de recuperação.', erro:'Diminuir demais o ritmo.', dica:'Mantenha boa execução mesmo no cansaço.'},
+  {nome:'Agachamento com Insistência', como:'Faça o agachamento mantendo 2 pequenas pausas agachada e volta.', erro:'Relaxar no final do movimento.', dica:'Controle a descida e evite impulsionar — mantenha o músculo da coxa tensionado.'},
+  {nome:'Cadeirinha na Parede', como:'Apoie as costas na parede e mantenha os joelhos dobrados a 90 graus.', erro:'Inclinar demais o tronco.', dica:'Respiração normal e abdômen ativo.'},
+  {nome:'Elevação Pélvica no Sofá', como:'Apoie as costas no sofá, eleve o quadril contraindo os posteriores de coxa e glúteos. Mantenha por 2 segundos e volte controlado.', erro:'Arquear a lombar.', dica:'Pense em empurrar o chão com os calcanhares.'},
+  {nome:'Agachamento Sumo', como:'Posicione os pés mais afastados e pontas levemente para fora. Agache e retorne abrindo os joelhos acompanhando os pés.', erro:'Joelho fechado ou panturrilha inclinar para frente.', dica:'Mantenha o peito aberto e abdômen firme.'},
+  {nome:'Agachamento Lateral', como:'Afaste um pé para o lado, flexione o joelho lateral descendo o quadril e retorne.', erro:'Deixar o joelho colapsar para dentro.', dica:'Mantenha o peso no calcanhar da perna flexionada.'}
+];
+
+var METRICS = ['Frequência','Humor','Energia','Dificuldade','Dor ou desconforto','Sono','Alimentação'];
+
+function getKey(w, t, id) { return 'w' + w + '-' + t + '-' + id; }
+function getEvalKey(w) { return 'eval-w' + w; }
+
+function switchTab(tab) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('screen-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('active');
+  if (tab === 'treino') renderTreino();
+  else if (tab === 'guia') renderGuia();
+  else if (tab === 'aval') renderAval();
+  else if (tab === 'perfil') renderPerfil();
+}
+
+function changeWeek(d) {
+  currentWeek = Math.max(1, Math.min(TOTAL_WEEKS, currentWeek + d));
+  document.getElementById('week-display').textContent = currentWeek;
+  document.getElementById('prev-week').disabled = currentWeek === 1;
+  document.getElementById('next-week').disabled = currentWeek === TOTAL_WEEKS;
+  renderTreino();
+}
+
+function selectTreino(t) { currentTreino = t; renderTreino(); }
+
+function renderTreino() {
+  var keys = ['A','B','C'];
+  var tabsHtml = '';
+  for (var i = 0; i < keys.length; i++) {
+    var t = keys[i];
+    var exList = TREINOS[t].exercises;
+    var done = 0;
+    for (var j = 0; j < exList.length; j++) {
+      if (state[getKey(currentWeek, t, exList[j].id)] && state[getKey(currentWeek, t, exList[j].id)].done) done++;
+    }
+    tabsHtml += '<button class="t-tab' + (t === currentTreino ? ' active' : '') + '" onclick="selectTreino(\'' + t + '\')">';
+    tabsHtml += 'Treino ' + t;
+    if (done > 0) tabsHtml += ' · ' + done + '/' + exList.length;
+    tabsHtml += '</button>';
+  }
+  document.getElementById('treino-tabs').innerHTML = tabsHtml;
+
+  var tr = TREINOS[currentTreino];
+  var exList = tr.exercises;
+  var totalDone = 0;
+
+  var html = '<div class="card"><div class="card-title">' + tr.name + ' · Semana ' + currentWeek + '</div>';
+  html += '<div class="card-sub">' + tr.focus + ' · 100% peso do corpo</div>';
+
+  for (var i = 0; i < exList.length; i++) {
+    var ex = exList[i];
+    var key = getKey(currentWeek, currentTreino, ex.id);
+    var exState = state[key] || {};
+    var isDone = !!exState.done;
+    if (isDone) totalDone++;
+
+    html += '<div class="ex-item' + (isDone ? ' done-ex' : '') + '">';
+    html += '<div class="ex-top">';
+    html += '<div class="ex-check' + (isDone ? ' done' : '') + '" onclick="toggleDone(\'' + ex.id + '\')">' + (isDone ? '✓' : '') + '</div>';
+    html += '<div class="ex-info"><div class="ex-name">' + ex.nome + '</div>';
+    html += '<div class="ex-meta">' + ex.series + 'x · ' + ex.reps + ' · <span class="ex-badge">Peso do corpo</span></div>';
+    html += '<div style="font-size:11px;color:var(--text3);margin-top:2px;font-weight:400">' + ex.obj + '</div>';
+    html += '</div></div></div>';
+  }
+  html += '</div>';
+
+  var total = exList.length;
+  var done = totalDone;
+  html += '<button class="finish-btn" ' + (done === total ? '' : 'disabled') + ' onclick="showToast(\'Treino ' + currentTreino + ' finalizado! 💪\')">';
+  html += done === total ? '✅ Treino ' + currentTreino + ' Concluído!' : 'Complete todos os exercícios (' + done + '/' + total + ')';
+  html += '</button>';
+
+  document.getElementById('treino-body').innerHTML = html;
+}
+
+function toggleDone(id) {
+  var key = getKey(currentWeek, currentTreino, id);
+  if (!state[key]) state[key] = {};
+  state[key].done = !state[key].done;
+  saveState(); renderTreino();
+  if (state[key].done) showToast('Exercício concluído ✓');
+}
+
+function renderGuia() {
+  function draw(filter) {
+    var f = (filter || '').toLowerCase();
+    var items = GUIA_DATA.filter(function(g) { return g.nome.toLowerCase().indexOf(f) >= 0; });
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+      var g = items[i];
+      html += '<div class="guia-item"><div class="guia-name">' + g.nome + '</div>';
+      html += '<div class="guia-row"><span class="guia-tag tag-como">Como fazer</span><p>' + g.como + '</p></div>';
+      html += '<div class="guia-row"><span class="guia-tag tag-erro">Erro comum</span><p>' + g.erro + '</p></div>';
+      html += '<div class="guia-row"><span class="guia-tag tag-dica">Dica</span><p>' + g.dica + '</p></div>';
+      html += '</div>';
+    }
+    document.getElementById('guia-list').innerHTML = html || '<div style="text-align:center;padding:24px;color:var(--text3)">Nenhum exercício encontrado.</div>';
+  }
+  draw('');
+  document.getElementById('guia-search').oninput = function() { draw(this.value); };
+}
+
+function renderAval() {
+  var html = '';
+  for (var w = 1; w <= TOTAL_WEEKS; w++) {
+    var wkey = getEvalKey(w);
+    var data = state[wkey] || {};
+    var hasFilled = Object.keys(data).length > 0;
+    html += '<div class="aval-card">';
+    html += '<div class="aval-week-title">Semana ' + w + '<span class="aval-badge' + (hasFilled ? ' filled' : '') + '">' + (hasFilled ? '✓ OK' : 'Pendente') + '</span></div>';
+    for (var m = 0; m < METRICS.length; m++) {
+      var metric = METRICS[m];
+      var mkey = metric.toLowerCase().replace(/\s/g,'_').replace(/[^a-z_]/g,'');
+      var val = data[mkey];
+      if (pendingAvals[w] && pendingAvals[w][mkey] !== undefined) val = pendingAvals[w][mkey];
+      html += '<div class="aval-field"><span class="aval-lbl">' + metric + '</span><div class="aval-scale">';
+      for (var n = 1; n <= 5; n++) {
+        var isSel = val == n;
+        html += '<button class="aval-btn' + (isSel ? ' sel' : '') + '" onclick="setPending(' + w + ',\'' + mkey + '\',' + n + ')">' + n + '</button>';
+      }
+      html += '</div></div>';
+    }
+    html += '<textarea class="aval-nota" id="nota-w' + w + '" placeholder="Nota da semana..." rows="2">' + (data.nota || '') + '</textarea>';
+    html += '<button class="aval-save" onclick="saveAval(' + w + ')">Salvar Semana ' + w + '</button>';
+    html += '</div>';
+  }
+  document.getElementById('aval-content').innerHTML = html;
+}
+
+function setPending(week, mkey, val) {
+  if (!pendingAvals[week]) pendingAvals[week] = {};
+  pendingAvals[week][mkey] = val;
+  renderAval();
+}
+
+function saveAval(week) {
+  var wkey = getEvalKey(week);
+  if (!state[wkey]) state[wkey] = {};
+  if (pendingAvals[week]) {
+    var keys = Object.keys(pendingAvals[week]);
+    for (var i = 0; i < keys.length; i++) state[wkey][keys[i]] = pendingAvals[week][keys[i]];
+    delete pendingAvals[week];
+  }
+  var notaEl = document.getElementById('nota-w' + week);
+  if (notaEl) state[wkey].nota = notaEl.value;
+  saveState();
+  showToast('Semana ' + week + ' salva! ✓');
+  renderAval();
+}
+
+function renderPerfil() {
+  currentPeso = parseFloat(state.peso) || 88;
+  document.getElementById('peso-edit').textContent = currentPeso.toFixed(1).replace('.',',');
+}
+
+function adjPeso(delta) {
+  currentPeso = Math.max(30, Math.round((currentPeso + delta) * 10) / 10);
+  document.getElementById('peso-edit').textContent = currentPeso.toFixed(1).replace('.',',');
+}
+
+function savePeso() {
+  state.peso = currentPeso;
+  saveState();
+  showToast('Peso atualizado: ' + currentPeso.toFixed(1).replace('.',',') + 'kg');
+}
+
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2200);
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    loadFromFirebase(function() {
+      document.getElementById('splash').classList.add('hide');
+      setTimeout(function() {
+        document.getElementById('app').classList.add('visible');
+        document.getElementById('prev-week').disabled = true;
+        renderTreino();
+        renderGuia();
+      }, 300);
+    });
+  }, 1400);
+});
+</script>
+</body>
+</html>
